@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Portfolio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&amp;family=Space+Grotesk:wght@400;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    html {
+      height: 100%;
+      font-size: clamp(14px, 2.5vw, 16px);
+    }
+
+    body {
+      height: 100%;
+    }
+
+    #app-wrapper {
+      height: 100%;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .font-display {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    .font-sans {
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-60px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), inset 0 0 20px rgba(139, 92, 246, 0.1);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(139, 92, 246, 0.6), inset 0 0 30px rgba(139, 92, 246, 0.2);
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    @keyframes gradientShift {
+      0%, 100% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+    }
+
+    @keyframes pulse-ring {
+      0% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 20px rgba(139, 92, 246, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+      }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .animate-slide-in-right {
+      animation: slideInRight 0.8s ease-out forwards;
+    }
+
+    .animate-slide-in-left {
+      animation: slideInLeft 0.8s ease-out forwards;
+    }
+
+    .animate-glow {
+      animation: glow 3s ease-in-out infinite;
+    }
+
+    .animate-float {
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .animate-shimmer {
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      background-size: 1000px 100%;
+      animation: shimmer 3s infinite;
+    }
+
+    .animate-gradient-shift {
+      background-size: 200% 200%;
+      animation: gradientShift 6s ease infinite;
+    }
+
+    .animate-pulse-ring {
+      animation: pulse-ring 2s infinite;
+    }
+
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+    .delay-600 { animation-delay: 0.6s; }
+    .delay-700 { animation-delay: 0.7s; }
+
+    .glass-effect {
+      backdrop-filter: blur(20px);
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .premium-gradient {
+      background: linear-gradient(135deg, #0f172a 0%, #1a1a3e 25%, #2d1b4e 50%, #1a1a3e 75%, #0f172a 100%);
+      background-size: 200% 200%;
+    }
+
+    .project-card {
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .project-card:hover::before {
+      left: 100%;
+    }
+
+    .project-card:hover {
+      border-color: rgba(139, 92, 246, 0.6);
+      transform: translateY(-8px);
+      box-shadow: 0 30px 60px rgba(139, 92, 246, 0.2);
+    }
+
+    .skill-bubble {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .skill-bubble::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .skill-bubble:hover::before {
+      opacity: 1;
+    }
+
+    .skill-bubble:hover {
+      background: rgba(139, 92, 246, 0.2);
+      border-color: rgba(139, 92, 246, 0.8);
+      transform: scale(1.08) translateY(-4px);
+      box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2);
+    }
+
+    .contact-card-premium {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card-premium::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .contact-card-premium:hover::before {
+      opacity: 1;
+    }
+
+    .contact-card-premium:hover {
+      transform: translateY(-6px);
+      border-color: rgba(139, 92, 246, 0.6);
+    }
+
+    .icon-glow {
+      position: relative;
+      display: inline-block;
+    }
+
+    .icon-glow::after {
+      content: '';
+      position: absolute;
+      top: -20%;
+      left: -20%;
+      width: 140%;
+      height: 140%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .icon-glow:hover::after {
+      opacity: 1;
+    }
+
+    .stat-card {
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #c084fc);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .stat-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    @media (max-width: 640px) {
+      html {
+        font-size: clamp(13px, 3.5vw, 14px);
+      }
+
+      #hero-name {
+        font-size: clamp(2rem, 8vw, 2.5rem) !important;
+      }
+
+      #hero-title {
+        font-size: clamp(1.25rem, 5vw, 1.875rem) !important;
+      }
+
+      .text-5xl {
+        font-size: clamp(1.75rem, 6vw, 2.25rem) !important;
+      }
+
+      .text-4xl {
+        font-size: clamp(1.5rem, 5vw, 1.875rem) !important;
+      }
+
+      .text-2xl {
+        font-size: clamp(1.125rem, 4vw, 1.5rem) !important;
+      }
+
+      .text-xl {
+        font-size: clamp(1rem, 3.5vw, 1.25rem) !important;
+      }
+
+      .text-lg {
+        font-size: clamp(0.95rem, 3vw, 1.125rem) !important;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-sans">
+  <div id="app-wrapper" class="w-full h-full overflow-auto premium-gradient"><!-- Navigation -->
+   <nav class="fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-4" style="background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(139, 92, 246, 0.2);">
+    <div class="max-w-7xl mx-auto flex justify-between items-center"><a href="#hero" id="nav-logo" class="text-lg sm:text-xl font-display font-bold font-mono relative" style="color: #c084fc;"> <span class="relative z-10">eng</span> <span style="background: linear-gradient(135deg, #3b82f6 0%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">ineer</span> </a>
+     <div class="flex gap-4 sm:gap-8 text-xs sm:text-sm"><a href="#about" class="font-medium transition-all hover:text-purple-400" style="color: #cbd5e1;">About</a> <a href="#education" class="font-medium transition-all hover:text-purple-400" style="color: #cbd5e1;">Education</a> <a href="#projects" class="font-medium transition-all hover:text-purple-400" style="color: #cbd5e1;">Projects</a> <a href="#skills" class="font-medium transition-all hover:text-purple-400" style="color: #cbd5e1;">Skills</a> <a href="#contact" class="font-medium transition-all hover:text-purple-400" style="color: #cbd5e1;">Contact</a>
+     </div>
+    </div>
+   </nav><!-- Hero Section -->
+   <section id="hero" class="relative min-h-screen flex items-center justify-center px-4 sm:px-6 pt-20 overflow-hidden"><!-- Animated Background Elements -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+     <div class="absolute top-20 left-10 w-72 sm:w-96 h-72 sm:h-96 animate-float" style="background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%); border-radius: 50%; filter: blur(70px);"></div>
+     <div class="absolute bottom-32 right-20 w-72 sm:w-96 h-72 sm:h-96 animate-float" style="background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, transparent 70%); border-radius: 50%; filter: blur(90px); animation-delay: -2.5s;"></div>
+     <div class="absolute top-1/2 right-1/4 w-64 h-64 opacity-20 animate-float" style="background: radial-gradient(circle, rgba(192, 132, 252, 0.2) 0%, transparent 70%); border-radius: 50%; filter: blur(80px); animation-delay: -1s;"></div>
+    </div>
+    <div class="relative z-10 w-full max-w-6xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+     <div>
+      <p class="text-xs sm:text-sm tracking-[0.4em] uppercase mb-4 sm:mb-6 opacity-0 animate-fade-in-up font-display font-semibold" style="color: #c084fc;">Welcome to excellence</p>
+      <h1 id="hero-name" class="text-4xl sm:text-6xl md:text-7xl font-display font-bold mb-4 sm:mb-6 opacity-0 animate-fade-in-up delay-100 leading-tight" style="color: #f0f6fc;">Amira Hassan</h1>
+      <p id="hero-title" class="text-xl sm:text-3xl md:text-4xl font-light mb-3 sm:mb-4 opacity-0 animate-fade-in-up delay-200 font-display" style="background: linear-gradient(135deg, #3b82f6 0%, #c084fc 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Full Stack Engineer</p>
+      <p id="hero-tagline" class="text-base sm:text-lg max-w-lg mb-8 sm:mb-12 opacity-0 animate-fade-in-up delay-300 leading-relaxed font-sans" style="color: #cbd5e1;">Building scalable systems and elegant interfaces. Specialized in cloud architecture, microservices, and performance optimization with a focus on user experience.</p>
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 opacity-0 animate-fade-in-up delay-400"><a href="#projects" class="px-8 py-4 rounded-lg font-semibold transition-all hover:scale-105 text-center font-sans" style="background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%); color: #fff; box-shadow: 0 10px 30px rgba(192, 132, 252, 0.3);">View My Work</a> <a href="#contact" class="px-8 py-4 rounded-lg font-semibold transition-all hover:scale-105 text-center font-sans" style="background: rgba(139, 92, 246, 0.1); color: #c084fc; border: 2px solid rgba(139, 92, 246, 0.5);">Get In Touch</a>
+      </div>
+      <div class="mt-8 sm:mt-12 flex gap-4 sm:gap-6 opacity-0 animate-fade-in-up delay-500"><a href="#" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:scale-110 group" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);">
+        <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+        </svg></a> <a href="#" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:scale-110 group" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);">
+        <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+        </svg></a> <a href="#" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:scale-110 group" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);">
+        <svg class="w-6 h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+        </svg></a>
+      </div>
+     </div>
+     <div class="opacity-0 animate-slide-in-right delay-300 hidden md:block">
+      <div class="relative animate-float" style="perspective: 1000px;">
+       <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px rgba(139, 92, 246, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);">
+        <div style="background: linear-gradient(135deg, #1a1a3e 0%, #0f172a 100%); border-bottom: 1px solid rgba(139, 92, 246, 0.2); padding: 16px 20px; display: flex; gap: 8px; align-items: center;">
+         <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
+         <div style="width: 12px; height: 12px; border-radius: 50%; background: #f97316;"></div>
+         <div style="width: 12px; height: 12px; border-radius: 50%; background: #c084fc;"></div><span class="text-xs ml-auto font-mono" style="color: #64748b;">app.tsx</span>
+        </div>
+        <div class="font-mono text-sm p-6" style="color: #cbd5e1; line-height: 1.8;">
+         <div>
+          <span style="color: #f87171;">const</span> <span style="color: #c084fc;">buildSomething</span> <span style="color: #f87171;">=</span> () <span style="color: #f87171;">=&gt;</span> {
+         </div>
+         <div style="color: #64748b;"><span style="color: #64748b;">// Excellence in code</span>
+         </div>
+         <div><span style="color: #f87171;">return</span> <span style="color: #60a5fa;">"Passion + Engineering"</span>;
+         </div>
+         <div>
+          };
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div><!-- Scroll Indicator -->
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 opacity-60 animate-fade-in-up delay-600">
+     <div class="animate-bounce" style="color: #c084fc;">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+     </div>
+    </div>
+   </section><!-- About Section -->
+   <section id="about" class="py-20 sm:py-32 px-4 sm:px-6" style="border-top: 1px solid rgba(139, 92, 246, 0.15);">
+    <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-16 items-center">
+     <div class="relative opacity-0 animate-fade-in-up">
+      <div class="relative"><img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&amp;h=500&amp;fit=crop" alt="Amira Hassan - Professional portrait" loading="lazy" class="w-full rounded-2xl shadow-2xl" style="border: 2px solid rgba(139, 92, 246, 0.4); max-width: 450px; filter: brightness(1.1) contrast(1.05); height: 525px;" onerror="console.error('Image failed to load:', this.src); this.style.background='linear-gradient(135deg, #c084fc 0%, #a855f7 100%)'; this.style.width='100%'; this.style.height='525px';">
+       <div class="absolute -bottom-8 -right-8 w-32 h-32 rounded-2xl -z-10 opacity-0 animate-fade-in-up delay-100" style="background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%); filter: blur(20px);"></div>
+      </div>
+     </div>
+     <div class="opacity-0 animate-fade-in-up delay-100">
+      <p class="text-xs sm:text-sm tracking-[0.3em] uppercase mb-3 sm:mb-4 font-display font-semibold" style="color: #c084fc;">About Me</p>
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold mb-6 sm:mb-8 leading-tight" style="color: #f0f6fc;">Engineering Excellence &amp; Innovation</h2>
+      <p id="about-text" class="text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 font-sans" style="color: #cbd5e1;">I'm a full-stack engineer with 8+ years building mission-critical applications at scale. I specialize in system design, cloud infrastructure, and leading technical teams. My passion is solving complex problems with elegant code and mentoring the next generation of engineers.</p>
+      <div class="grid grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-10">
+       <div class="stat-card p-6 sm:p-8 rounded-xl opacity-0 animate-fade-in-up delay-200" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(139, 92, 246, 0.05) 100%); border: 1px solid rgba(139, 92, 246, 0.3);">
+        <p class="text-3xl sm:text-4xl font-bold mb-2 font-display" style="color: #c084fc;">120+</p>
+        <p class="text-xs sm:text-sm font-sans" style="color: #94a3b8;">Projects Shipped</p>
+       </div>
+       <div class="stat-card p-6 sm:p-8 rounded-xl opacity-0 animate-fade-in-up delay-300" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%); border: 1px solid rgba(59, 130, 246, 0.3);">
+        <p class="text-3xl sm:text-4xl font-bold mb-2 font-display" style="color: #3b82f6;">8+</p>
+        <p class="text-xs sm:text-sm font-sans" style="color: #94a3b8;">Years Experience</p>
+       </div>
+      </div>
+      <p class="text-xs sm:text-sm font-display font-semibold mb-4" style="color: #c084fc;">Tech Stack Highlights:</p>
+      <div class="flex flex-wrap gap-3"><span class="px-4 py-2 rounded-full text-xs sm:text-sm font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);">TypeScript</span> <span class="px-4 py-2 rounded-full text-xs sm:text-sm font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.4);">React</span> <span class="px-4 py-2 rounded-full text-xs sm:text-sm font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);">Node.js</span> <span class="px-4 py-2 rounded-full text-xs sm:text-sm font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.4);">AWS</span> <span class="px-4 py-2 rounded-full text-xs sm:text-sm font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.4);">Docker</span>
+      </div>
+     </div>
+    </div>
+   </section><!-- Education Section -->
+   <section id="education" class="py-20 sm:py-32 px-4 sm:px-6" style="border-top: 1px solid rgba(139, 92, 246, 0.15); background: rgba(59, 130, 246, 0.03);">
+    <div class="max-w-7xl mx-auto">
+     <div class="mb-12 sm:mb-20">
+      <p class="text-xs sm:text-sm tracking-[0.2em] uppercase mb-3 sm:mb-4 opacity-0 animate-fade-in-up font-display font-semibold" style="color: #c084fc;">Academic Background</p>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-display font-bold opacity-0 animate-fade-in-up delay-100" style="color: #f0f6fc;">Education &amp; Certifications</h2>
+     </div>
+     <div class="grid md:grid-cols-2 gap-6 sm:gap-8">
+      <div class="stat-card opacity-0 animate-fade-in-up delay-200" style="background: rgba(139, 92, 246, 0.08); border-left: 4px solid rgba(139, 92, 246, 0.6); padding: 24px; border-radius: 12px;">
+       <div class="flex items-start justify-between mb-2 gap-4">
+        <div>
+         <p class="text-lg sm:text-2xl font-bold" style="color: #f0f6fc;">B.S. in Computer Science</p>
+         <p class="text-base sm:text-lg" style="color: #c084fc;">Massachusetts Institute of Technology</p>
+        </div>
+        <svg class="w-10 sm:w-12 h-10 sm:h-12 flex-shrink-0 opacity-20" style="color: #c084fc;" fill="currentColor" viewbox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+        </svg>
+       </div>
+       <p class="text-xs sm:text-sm mb-4" style="color: #94a3b8;">2016 - 2020</p>
+       <p class="text-sm" style="color: #94a3b8;">GPA: 3.9/4.0 • Dean's List • Computer Science Honors</p>
+      </div>
+      <div class="stat-card opacity-0 animate-fade-in-up delay-300" style="background: rgba(59, 130, 246, 0.08); border-left: 4px solid rgba(59, 130, 246, 0.6); padding: 24px; border-radius: 12px;">
+       <div class="flex items-start justify-between mb-4 gap-4">
+        <div>
+         <p class="text-lg sm:text-2xl font-bold" style="color: #f0f6fc;">Professional Certifications</p>
+        </div>
+        <svg class="w-10 sm:w-12 h-10 sm:h-12 flex-shrink-0 opacity-20" style="color: #3b82f6;" fill="currentColor" viewbox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zm-5.04-6.71l-2.75 3.54-2.16-2.66c-.44-.53-1.25-.58-1.78-.15-.53.44-.58 1.25-.15 1.78l3 3.68c.25.31.61.5 1 .5.39 0 .75-.19 1-.5l4-5.15c.44-.53.39-1.34-.15-1.78-.53-.44-1.34-.39-1.78.15z" />
+        </svg>
+       </div>
+       <div class="space-y-3">
+        <div class="p-3 sm:p-4 rounded-lg" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="font-semibold text-sm sm:text-base" style="color: #f0f6fc;">AWS Solutions Architect</p>
+         <p class="text-xs" style="color: #94a3b8;">Amazon Web Services • 2022</p>
+        </div>
+        <div class="p-3 sm:p-4 rounded-lg" style="background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="font-semibold text-sm sm:text-base" style="color: #f0f6fc;">Kubernetes Administrator (CKA)</p>
+         <p class="text-xs" style="color: #94a3b8;">Linux Foundation • 2021</p>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="mt-8 sm:mt-12 p-6 sm:p-8 rounded-xl opacity-0 animate-fade-in-up delay-400" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+      <p class="text-lg sm:text-xl font-bold mb-4 font-display" style="color: #c084fc;">Key Coursework &amp; Specializations</p>
+      <div class="grid md:grid-cols-3 gap-4">
+       <div class="space-y-2">
+        <p class="font-semibold text-sm sm:text-base" style="color: #f0f6fc;">Systems &amp; Architecture</p>
+        <p class="text-xs sm:text-sm" style="color: #cbd5e1;">Distributed Systems • Database Design • Software Architecture • Operating Systems</p>
+       </div>
+       <div class="space-y-2">
+        <p class="font-semibold text-sm sm:text-base" style="color: #f0f6fc;">Cloud &amp; DevOps</p>
+        <p class="text-xs sm:text-sm" style="color: #cbd5e1;">Cloud Computing • Infrastructure as Code • CI/CD • Container Orchestration</p>
+       </div>
+       <div class="space-y-2">
+        <p class="font-semibold text-sm sm:text-base" style="color: #f0f6fc;">Data &amp; AI/ML</p>
+        <p class="text-xs sm:text-sm" style="color: #cbd5e1;">Machine Learning • Data Structures • Algorithms • Data Analytics</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Projects Section -->
+   <section id="projects" class="py-20 sm:py-32 px-4 sm:px-6" style="border-top: 1px solid rgba(139, 92, 246, 0.15);">
+    <div class="max-w-7xl mx-auto">
+     <div class="mb-16 sm:mb-24">
+      <p class="text-xs sm:text-sm tracking-[0.3em] uppercase mb-4 opacity-0 animate-fade-in-up font-display font-semibold" style="color: #c084fc;">Featured Work</p>
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold opacity-0 animate-fade-in-up delay-100" style="color: #f0f6fc;">Engineering Projects</h2>
+     </div>
+     <div class="grid md:grid-cols-2 gap-8 sm:gap-10">
+      <div class="project-card p-8 rounded-xl opacity-0 animate-fade-in-up delay-200" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.02) 100%); border: 1px solid rgba(139, 92, 246, 0.2);"><img src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&amp;h=400&amp;fit=crop" alt="Cloud infrastructure project" loading="lazy" class="w-full rounded-lg mb-6 h-48 object-cover" style="border: 1px solid rgba(139, 92, 246, 0.3);" onerror="console.error('Image failed:', this.src); this.style.background='linear-gradient(135deg, #c084fc 0%, #a855f7 100%)';">
+       <p class="text-xs uppercase tracking-wider mb-4 font-display font-semibold" style="color: #c084fc;">Architecture</p>
+       <h3 class="text-2xl font-display font-bold mb-4" style="color: #f0f6fc;">Microservices Platform</h3>
+       <p class="text-sm leading-relaxed mb-6 font-sans" style="color: #cbd5e1;">Architected and deployed a distributed microservices platform handling 1M+ requests/day with 99.99% uptime. Implemented service mesh, automated scaling, and real-time monitoring.</p>
+       <div class="flex gap-2 flex-wrap"><span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3);">Kubernetes</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">Go</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3);">AWS</span>
+       </div>
+      </div>
+      <div class="project-card p-8 rounded-xl opacity-0 animate-fade-in-up delay-300" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px solid rgba(59, 130, 246, 0.2);"><img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&amp;h=400&amp;fit=crop" alt="Real-time analytics dashboard" loading="lazy" class="w-full rounded-lg mb-6 h-48 object-cover" style="border: 1px solid rgba(59, 130, 246, 0.3);" onerror="console.error('Image failed:', this.src); this.style.background='linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';">
+       <p class="text-xs uppercase tracking-wider mb-4 font-display font-semibold" style="color: #3b82f6;">Full Stack</p>
+       <h3 class="text-2xl font-display font-bold mb-4" style="color: #f0f6fc;">Real-time Analytics Platform</h3>
+       <p class="text-sm leading-relaxed mb-6 font-sans" style="color: #cbd5e1;">Built real-time data visualization platform processing 100k events/sec. Implemented WebSocket streaming, in-memory caching, and time-series database optimization.</p>
+       <div class="flex gap-2 flex-wrap"><span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">React</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3);">ClickHouse</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">Node.js</span>
+       </div>
+      </div>
+      <div class="project-card p-8 rounded-xl opacity-0 animate-fade-in-up delay-400" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.02) 100%); border: 1px solid rgba(139, 92, 246, 0.2);">
+       <svg class="w-full rounded-lg mb-6 h-48" style="border: 1px solid rgba(139, 92, 246, 0.3);" viewbox="0 0 600 400" xmlns="http://www.w3.org/2000/svg"><defs>
+         <lineargradient id="mlGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#c084fc;stop-opacity:0.3" />
+          <stop offset="100%" style="stop-color:#a855f7;stop-opacity:0.3" />
+         </lineargradient>
+        </defs> <rect width="600" height="400" fill="url(#mlGrad)" /> <circle cx="60" cy="200" r="25" fill="#3b82f6" opacity="0.8" /> <text x="60" y="206" text-anchor="middle" fill="white" font-size="11" font-weight="bold">
+         Data
+        </text> <line x1="95" y1="200" x2="130" y2="200" stroke="#c084fc" stroke-width="2.5" /> <rect x="130" y="175" width="70" height="50" fill="#c084fc" opacity="0.7" rx="4" /> <text x="165" y="205" text-anchor="middle" fill="white" font-size="10" font-weight="bold">
+         Prepare
+        </text> <line x1="210" y1="200" x2="245" y2="200" stroke="#c084fc" stroke-width="2.5" /> <rect x="245" y="175" width="70" height="50" fill="#a855f7" opacity="0.7" rx="4" /> <text x="280" y="197" text-anchor="middle" fill="white" font-size="9">
+         Train
+        </text> <text x="280" y="210" text-anchor="middle" fill="white" font-size="9">
+         Model
+        </text> <line x1="325" y1="200" x2="360" y2="200" stroke="#c084fc" stroke-width="2.5" /> <rect x="360" y="175" width="70" height="50" fill="#c084fc" opacity="0.7" rx="4" /> <text x="395" y="197" text-anchor="middle" fill="white" font-size="9">
+         Evaluate
+        </text> <text x="395" y="210" text-anchor="middle" fill="white" font-size="9">
+         Test
+        </text> <line x1="440" y1="200" x2="475" y2="200" stroke="#c084fc" stroke-width="2.5" /> <rect x="475" y="175" width="70" height="50" fill="#3b82f6" opacity="0.7" rx="4" /> <text x="510" y="197" text-anchor="middle" fill="white" font-size="9">
+         Deploy
+        </text> <text x="510" y="210" text-anchor="middle" fill="white" font-size="9">
+         Serve
+        </text> <line x1="555" y1="200" x2="540" y2="200" stroke="#c084fc" stroke-width="2.5" />
+       </svg>
+       <p class="text-xs uppercase tracking-wider mb-4 font-display font-semibold" style="color: #c084fc;">Infrastructure</p>
+       <h3 class="text-2xl font-display font-bold mb-4" style="color: #f0f6fc;">ML Pipeline Infrastructure</h3>
+       <p class="text-sm leading-relaxed mb-6 font-sans" style="color: #cbd5e1;">Engineered end-to-end ML pipeline with automated training, versioning, and deployment. Reduced model serving latency by 60% through optimization.</p>
+       <div class="flex gap-2 flex-wrap"><span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3);">Python</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3);">TensorFlow</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">Docker</span>
+       </div>
+      </div>
+      <div class="project-card p-8 rounded-xl opacity-0 animate-fade-in-up delay-500" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.02) 100%); border: 1px solid rgba(59, 130, 246, 0.2);"><img src="https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=600&amp;h=400&amp;fit=crop" alt="Mobile app development" loading="lazy" class="w-full rounded-lg mb-6 h-48 object-cover" style="border: 1px solid rgba(59, 130, 246, 0.3);" onerror="console.error('Image failed:', this.src); this.style.background='linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)';">
+       <p class="text-xs uppercase tracking-wider mb-4 font-display font-semibold" style="color: #3b82f6;">Mobile</p>
+       <h3 class="text-2xl font-display font-bold mb-4" style="color: #f0f6fc;">Cross-Platform Mobile App</h3>
+       <p class="text-sm leading-relaxed mb-6 font-sans" style="color: #cbd5e1;">Developed cross-platform mobile app with offline-first architecture. Achieved 4.8★ rating with 500k+ downloads across iOS and Android.</p>
+       <div class="flex gap-2 flex-wrap"><span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">React Native</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3);">Firebase</span> <span class="text-xs px-3 py-2 rounded-full font-mono" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3);">GraphQL</span>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Skills Section -->
+   <section id="skills" class="py-20 sm:py-32 px-4 sm:px-6" style="border-top: 1px solid rgba(139, 92, 246, 0.15); background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);">
+    <div class="max-w-7xl mx-auto">
+     <div class="mb-16 sm:mb-24">
+      <p class="text-xs sm:text-sm tracking-[0.3em] uppercase mb-4 opacity-0 animate-fade-in-up font-display font-semibold" style="color: #c084fc;">Technical Proficiency</p>
+      <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold opacity-0 animate-fade-in-up delay-100" style="color: #f0f6fc;">Languages &amp; Tools</h2>
+     </div>
+     <div class="grid md:grid-cols-3 gap-8 sm:gap-10">
+      <div class="opacity-0 animate-fade-in-up delay-200">
+       <p class="text-xs sm:text-sm font-bold mb-6 font-display" style="color: #c084fc; letter-spacing: 0.3em;">BACKEND</p>
+       <div class="space-y-4">
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">TypeScript/Node.js</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Python/Go</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">PostgreSQL/MongoDB</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Redis/RabbitMQ</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">GraphQL/REST APIs</p>
+        </div>
+       </div>
+      </div>
+      <div class="opacity-0 animate-fade-in-up delay-300">
+       <p class="text-xs sm:text-sm font-bold mb-6 font-display" style="color: #3b82f6; letter-spacing: 0.3em;">INFRASTRUCTURE</p>
+       <div class="space-y-4">
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">AWS (EC2, S3, Lambda)</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Kubernetes/Docker</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">CI/CD (GitHub Actions)</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Terraform/IaC</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Monitoring/Logging</p>
+        </div>
+       </div>
+      </div>
+      <div class="opacity-0 animate-fade-in-up delay-400">
+       <p class="text-xs sm:text-sm font-bold mb-6 font-display" style="color: #c084fc; letter-spacing: 0.3em;">FRONTEND</p>
+       <div class="space-y-4">
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">React/Next.js</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">TypeScript/Tailwind</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Web Performance</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Testing/E2E</p>
+        </div>
+        <div class="skill-bubble p-4 sm:p-5 rounded-xl" style="background: rgba(139, 92, 246, 0.08); border: 1px solid rgba(139, 92, 246, 0.3);">
+         <p class="text-sm font-mono font-semibold" style="color: #f0f6fc;">Accessibility</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Contact Section -->
+   <section id="contact" class="py-20 sm:py-32 px-4 sm:px-6" style="border-top: 1px solid rgba(139, 92, 246, 0.15);">
+    <div class="max-w-3xl mx-auto">
+     <p class="text-xs sm:text-sm tracking-[0.3em] uppercase mb-4 opacity-0 animate-fade-in-up font-display font-semibold" style="color: #c084fc;">Let's Connect</p>
+     <h2 class="text-4xl sm:text-5xl md:text-6xl font-display font-bold mb-6 sm:mb-8 opacity-0 animate-fade-in-up delay-100" style="color: #f0f6fc;">Ready to Build Something Great?</h2>
+     <p class="text-base sm:text-lg mb-12 sm:mb-16 opacity-0 animate-fade-in-up delay-200 font-sans" style="color: #cbd5e1;">I'm always interested in hearing about new projects and opportunities. Whether you have a question or just want to say hi, feel free to reach out!</p><!-- Contact Info Box -->
+     <div class="contact-card-premium opacity-0 animate-fade-in-up delay-300" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(59, 130, 246, 0.08) 100%); border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 20px; padding: 40px 32px; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.1);">
+      <div class="space-y-8 sm:space-y-10"><!-- Email -->
+       <div class="flex items-start gap-6">
+        <div class="icon-glow flex-shrink-0">
+         <svg class="w-8 sm:w-10 h-8 sm:h-10 mt-1" style="color: #c084fc;" fill="none" stroke="currentColor" viewbox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+         </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+         <p class="text-xs sm:text-sm uppercase tracking-[0.2em] mb-2 font-display font-semibold" style="color: #c084fc;">Email</p><a id="contact-email-link" href="mailto:amira.hassan@example.com" class="text-sm sm:text-base font-normal transition-all hover:text-purple-300 break-all font-sans" style="color: #cbd5e1;"> <span id="contact-email-text">amira.hassan@example.com</span> </a>
+        </div>
+       </div><!-- Divider -->
+       <div style="height: 1px; background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent);"></div><!-- Phone -->
+       <div class="flex items-start gap-6">
+        <div class="icon-glow flex-shrink-0">
+         <svg class="w-8 sm:w-10 h-8 sm:h-10 mt-1" style="color: #3b82f6;" fill="none" stroke="currentColor" viewbox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+         </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+         <p class="text-xs sm:text-sm uppercase tracking-[0.2em] mb-2 font-display font-semibold" style="color: #3b82f6;">Phone</p><a id="contact-phone-link" href="tel:+966501234567" class="text-sm sm:text-base font-normal transition-all hover:text-blue-300 font-sans" style="color: #cbd5e1;"> <span id="contact-phone-text">+966 50 123 4567</span> </a>
+        </div>
+       </div><!-- Divider -->
+       <div style="height: 1px; background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), transparent);"></div><!-- Location -->
+       <div class="flex items-start gap-6">
+        <div class="icon-glow flex-shrink-0">
+         <svg class="w-8 sm:w-10 h-8 sm:h-10 mt-1" style="color: #c084fc;" fill="none" stroke="currentColor" viewbox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+         </svg>
+        </div>
+        <div class="min-w-0 flex-1">
+         <p class="text-xs sm:text-sm uppercase tracking-[0.2em] mb-2 font-display font-semibold" style="color: #c084fc;">Location</p>
+         <p id="contact-location-text" class="text-sm sm:text-base font-normal font-sans" style="color: #cbd5e1;">Dubai, UAE</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Footer -->
+   <footer class="py-8 sm:py-12 px-4 sm:px-6 text-center" style="border-top: 1px solid rgba(139, 92, 246, 0.15);">
+    <p class="text-xs sm:text-sm font-sans" style="color: #64748b;">© 2024 Amira Hassan. Engineered with passion • Built with React &amp; TypeScript</p>
+   </footer>
+  </div>
+  <script>
+    const defaultConfig = {
+      hero_name: 'Amira Hassan',
+      hero_title: 'Full Stack Engineer',
+      hero_tagline: 'Building scalable systems and elegant interfaces. Specialized in cloud architecture, microservices, and performance optimization with a focus on user experience.',
+      about_text: 'I\'m a full-stack engineer with 8+ years building mission-critical applications at scale. I specialize in system design, cloud infrastructure, and leading technical teams. My passion is solving complex problems with elegant code and mentoring the next generation of engineers.',
+      contact_email: 'amira.hassan@example.com',
+      contact_phone: '+966 50 123 4567',
+      contact_location: 'Dubai, UAE',
+      primary_color: '#c084fc',
+      background_color: '#0f172a',
+      text_color: '#f0f6fc',
+      secondary_text_color: '#cbd5e1',
+      surface_color: '#1a1a3e',
+      font_family: 'Space Grotesk',
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const heroName = document.getElementById('hero-name');
+      const heroTitle = document.getElementById('hero-title');
+      const heroTagline = document.getElementById('hero-tagline');
+      const aboutText = document.getElementById('about-text');
+      const contactEmailLink = document.getElementById('contact-email-link');
+      const contactEmailText = document.getElementById('contact-email-text');
+      const contactPhoneLink = document.getElementById('contact-phone-link');
+      const contactPhoneText = document.getElementById('contact-phone-text');
+      const contactLocationText = document.getElementById('contact-location-text');
+
+      if (heroName) heroName.textContent = config.hero_name || defaultConfig.hero_name;
+      if (heroTitle) heroTitle.textContent = config.hero_title || defaultConfig.hero_title;
+      if (heroTagline) heroTagline.textContent = config.hero_tagline || defaultConfig.hero_tagline;
+      if (aboutText) aboutText.textContent = config.about_text || defaultConfig.about_text;
+
+      const email = config.contact_email || defaultConfig.contact_email;
+      if (contactEmailLink) contactEmailLink.href = `mailto:${email}`;
+      if (contactEmailText) contactEmailText.textContent = email;
+
+      const phone = config.contact_phone || defaultConfig.contact_phone;
+      const phoneLink = phone.replace(/\s+/g, '').replace(/[()]/g, '');
+      if (contactPhoneLink) contactPhoneLink.href = `tel:${phoneLink}`;
+      if (contactPhoneText) contactPhoneText.textContent = phone;
+
+      const location = config.contact_location || defaultConfig.contact_location;
+      if (contactLocationText) contactLocationText.textContent = location;
+
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseFontStack = 'system-ui, sans-serif';
+      document.querySelectorAll('.font-display').forEach(el => {
+        el.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      });
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (value) => {
+              config.primary_color = value;
+              window.elementSdk.setConfig({ primary_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_text_color || defaultConfig.secondary_text_color,
+            set: (value) => {
+              config.secondary_text_color = value;
+              window.elementSdk.setConfig({ secondary_text_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['hero_name', config.hero_name || defaultConfig.hero_name],
+        ['hero_title', config.hero_title || defaultConfig.hero_title],
+        ['hero_tagline', config.hero_tagline || defaultConfig.hero_tagline],
+        ['about_text', config.about_text || defaultConfig.about_text],
+        ['contact_email', config.contact_email || defaultConfig.contact_email],
+        ['contact_phone', config.contact_phone || defaultConfig.contact_phone],
+        ['contact_location', config.contact_location || defaultConfig.contact_location]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cc57c4d5352de71',t:'MTc3MDgzMDA5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
